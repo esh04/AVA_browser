@@ -33,6 +33,10 @@ except:
 df.columns = ['video_id','frame_timestamp','entity_box_x1','entity_box_y1','entity_box_x2',
                 'entity_box_y2','label','entity_id']
 
+# convert timestamp to hh:mm:ss:ms and store in a new column
+df['timestamp'] = pd.to_datetime(df['frame_timestamp'], unit='s').dt.strftime('%H:%M:%S:%f')
+
+
 # st.write(df)
 
 # make a rectangle around the speaker
@@ -64,13 +68,22 @@ if(nav == 'Video Analysis'):
     play_back = st_player(video_link)
     print(play_back)
 
-    # show info
-    st.write(df)
+    # show info of only some collumns
+    st.write(df[['timestamp', 'label', 'entity_id']])
 
 else:
     # choose a timestamp
-    num_timestamp = len(df)
+    num_timestamp = len(df) 
+
+    # slider of timestamps
     timestamp_idx = st.sidebar.slider('Select a timestamp', min_value=0, max_value=num_timestamp, step=1)
+
+    # display timestamp
+    st.sidebar.write('Timestamp: ', df['timestamp'][timestamp_idx])
+
+    # timestamp_idx = st.sidebar.number_input('Select a timestamp', min_value=0, max_value=num_timestamp, step=1)
+
+    
 
     # get the image from the video of the given timestamp
     img = get_image(video_link,  df['frame_timestamp'][timestamp_idx])
@@ -80,5 +93,5 @@ else:
     # display image
     st.image(img, use_column_width=True)
     # add label to image 
-    st.write(df['label'][timestamp_idx] + ' ' + str(df['entity_id'][timestamp_idx]))
+    st.write(df['label'][timestamp_idx] + '\n' + str(df['entity_id'][timestamp_idx]) + '\n' + df['timestamp'][timestamp_idx])
 
