@@ -1,0 +1,6 @@
+streamlit
+streamlit_player
+numpy
+pandas
+opencv-python
+watchdog
